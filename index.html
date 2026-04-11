@@ -14,17 +14,23 @@
         .status-orange { color: #f97316; } 
         .status-cyan { color: #06b6d4; } 
         
-        /* Ajustes para visualização e PDF */
+        /* Evita que as refeições sejam partidas entre páginas no PDF */
+        .meal-card {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
         #app-content.exporting {
             background-color: white !important;
-            padding: 10px !important;
-            max-width: none !important;
+            width: 100% !important;
+            padding: 0 !important;
         }
+
         #app-content.exporting header {
             position: static !important;
-            box-shadow: none !important;
-            border: 1px solid #eee;
+            margin-bottom: 20px !important;
         }
+
         .no-print { display: block; }
         .exporting .no-print { display: none !important; }
     </style>
@@ -96,9 +102,9 @@
             { name: "🍌 Banana (100g)", kcal: 98, carb: 26, prot: 1.3, fat: 0.1, fib: 1.5 },
             { name: "🍌 Banana (150g)", kcal: 147, carb: 39, prot: 2, fat: 0.15, fib: 2.2 },
             { name: "🥛 Leite pó integral (13g)", kcal: 65, carb: 5, prot: 3.2, fat: 3.5, fib: 0 },
+            { name: "🥛 Leite pó integral (26g)", kcal: 129, carb: 10, prot: 6.5, fat: 7, fib: 0 },
             { name: "🥛 Leite pó desnatado (13g)", kcal: 44, carb: 6.5, prot: 4.5, fat: 0, fib: 0 },
             { name: "🥛 Leite pó desnatado (26g)", kcal: 88, carb: 13, prot: 9, fat: 0, fib: 0 },
-            { name: "🥛 Leite pó integral (26g)", kcal: 129, carb: 10, prot: 6.5, fat: 7, fib: 0 },
             { name: "🍖 Bisteca frita (55g)", kcal: 107, carb: 0, prot: 17.8, fat: 3.9, fib: 0 },
             { name: "🍖 Bisteca frita (64g)", kcal: 125, carb: 0, prot: 20.7, fat: 4.5, fib: 0 },
             { name: "🍗 Peito frango frito (60g)", kcal: 103, carb: 0, prot: 18.9, fat: 2.5, fib: 0 },
@@ -182,19 +188,19 @@
                 }
 
                 const div = document.createElement('div');
-                div.className = "bg-white rounded-xl shadow p-5 border-l-8 border-black";
+                div.className = "meal-card bg-white rounded-xl shadow p-5 border-l-8 border-black";
                 div.innerHTML = `
                     <div class="flex flex-col md:flex-row justify-between mb-4 border-b pb-2">
                         <h2 class="text-lg font-bold">${meal.name}</h2>
                         <div class="text-right">
                             <p class="text-[10px] text-black font-bold uppercase">META: P:${Math.round(adj.p)}g C:${Math.round(adj.c)}g G:${Math.round(adj.g)}g | ${Math.round(adj.k)}kcal</p>
-                            <p class="text-xs ${curr.p >= adj.p ? 'text-black font-bold' : 'meta-gray'} uppercase">OBTIDO: P:${curr.p.toFixed(1)} C:${curr.c.toFixed(1)} G:${curr.g.toFixed(1)} | F: ${curr.f.toFixed(1)}g</p>
+                            <p class="text-xs ${curr.p >= adj.p ? 'text-black font-bold' : 'meta-gray'} uppercase font-bold">OBTIDO: P:${curr.p.toFixed(1)} C:${curr.c.toFixed(1)} G:${curr.g.toFixed(1)} | F: ${curr.f.toFixed(1)}g</p>
                         </div>
                     </div>
                     <div class="space-y-2 mb-4">
                         ${meal.selectedFoods.map((f, i) => `
                             <div class="flex justify-between items-center bg-gray-50 p-2 px-3 rounded text-sm">
-                                <div><span class="block font-medium">${f.name}</span><span class="text-[10px] text-gray-500 block uppercase font-bold">P: ${f.prot}g | C: ${f.carb}g | G: ${f.fat}g | F: ${f.fib}g</span></div>
+                                <div><span class="block font-medium">${f.name}</span><span class="text-[10px] text-gray-500 block uppercase">P: ${f.prot}g | C: ${f.carb}g | G: ${f.fat}g | F: ${f.fib}g</span></div>
                                 <button onclick="removeFood(${idx}, ${i})" class="text-red-400 p-1 no-print">✕</button>
                             </div>`).join('')}
                     </div>
@@ -217,15 +223,16 @@
 
             const opt = { 
                 margin: [10, 5, 10, 5], 
-                filename: 'meu-cardapio-dieta.pdf', 
+                filename: 'dieta.pdf', 
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true, 
                     letterRendering: true,
-                    scrollY: -window.scrollY 
+                    scrollY: -window.scrollY // Corrige o espaço em branco no topo
                 }, 
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: 'css', before: '.meal-card' } // Força a quebra inteligente
             };
 
             html2pdf().set(opt).from(element).save().then(() => {
