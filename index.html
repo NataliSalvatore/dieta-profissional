@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Dieta Pro - Planner Completo</title>
+    <title>Meu Dieta Pro - Planner Profissional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -13,6 +13,11 @@
         .status-green { color: #10b981; } 
         .status-orange { color: #f97316; } 
         .status-cyan { color: #06b6d4; } 
+        
+        /* Ajuste para o PDF não bugar com elementos fixos */
+        @media print {
+            .sticky { position: static !important; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans text-gray-900">
@@ -23,8 +28,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-total"></div>
             
             <div class="mt-4 p-3 bg-gray-100 rounded-lg flex flex-wrap justify-between items-center gap-2">
-                <div>
-                    <label class="text-sm font-semibold">Meta de Fibra (Adaptável):</label>
+                <div class="no-print"> <label class="text-sm font-semibold">Meta de Fibra (Adaptável):</label>
                     <input type="number" id="target-fiber" class="bg-transparent border-b border-gray-400 focus:outline-none w-16 px-2 text-center" value="25" onchange="updateUI()">
                 </div>
                 <div class="text-right">
@@ -35,7 +39,7 @@
 
         <div class="space-y-6" id="refeicoes-container"></div>
 
-        <div class="mt-8 flex justify-center">
+        <div class="mt-8 flex justify-center no-print">
             <button onclick="downloadPDF()" class="bg-black text-white px-8 py-3 rounded-full font-bold hover:bg-gray-800 transition-all flex items-center gap-2 shadow-lg">
                 📥 Baixar Cardápio em PDF
             </button>
@@ -81,17 +85,17 @@
             { name: "🍌 Banana (70g)", kcal: 69, carb: 18.2, prot: 0.9, fat: 0.07, fib: 1 },
             { name: "🍌 Banana (100g)", kcal: 98, carb: 26, prot: 1.3, fat: 0.1, fib: 1.5 },
             { name: "🍌 Banana (150g)", kcal: 147, carb: 39, prot: 2, fat: 0.15, fib: 2.2 },
-            { name: "🥛 Leite pó integral (13g - 1 colher)", kcal: 65, carb: 5, prot: 3.2, fat: 3.5, fib: 0 },
-            { name: "🥛 Leite pó desnatado (13g - 1 colher)", kcal: 44, carb: 6.5, prot: 4.5, fat: 0, fib: 0 },
-            { name: "🥛 Leite pó desnatado (26g - 2 colheres)", kcal: 88, carb: 13, prot: 9, fat: 0, fib: 0 },
-            { name: "🥛 Leite pó integral (26g - 2 colheres)", kcal: 129, carb: 10, prot: 6.5, fat: 7, fib: 0 },
-            { name: "🍖 Bisteca magra frita (60g, cons. 55g)", kcal: 107, carb: 0, prot: 17.8, fat: 3.9, fib: 0 },
-            { name: "🍖 Bisteca magra frita (70g, cons. 64g)", kcal: 125, carb: 0, prot: 20.7, fat: 4.5, fib: 0 },
-            { name: "🍗 Peito de frango frito no óleo (60g)", kcal: 103, carb: 0, prot: 18.9, fat: 2.5, fib: 0 },
-            { name: "🍗 Peito de frango frito no óleo (70g)", kcal: 120, carb: 0, prot: 22, fat: 2.9, fib: 0 },
+            { name: "🥛 Leite pó integral (13g)", kcal: 65, carb: 5, prot: 3.2, fat: 3.5, fib: 0 },
+            { name: "🥛 Leite pó desnatado (13g)", kcal: 44, carb: 6.5, prot: 4.5, fat: 0, fib: 0 },
+            { name: "🥛 Leite pó desnatado (26g)", kcal: 88, carb: 13, prot: 9, fat: 0, fib: 0 },
+            { name: "🥛 Leite pó integral (26g)", kcal: 129, carb: 10, prot: 6.5, fat: 7, fib: 0 },
+            { name: "🍖 Bisteca frita (55g)", kcal: 107, carb: 0, prot: 17.8, fat: 3.9, fib: 0 },
+            { name: "🍖 Bisteca frita (64g)", kcal: 125, carb: 0, prot: 20.7, fat: 4.5, fib: 0 },
+            { name: "🍗 Peito frango frito (60g)", kcal: 103, carb: 0, prot: 18.9, fat: 2.5, fib: 0 },
+            { name: "🍗 Peito frango frito (70g)", kcal: 120, carb: 0, prot: 22, fat: 2.9, fib: 0 },
             { name: "🍗 Frango cozido refogado (60g)", kcal: 124, carb: 0, prot: 16.2, fat: 6.3, fib: 0 },
             { name: "🍗 Frango cozido refogado (70g)", kcal: 144, carb: 0, prot: 18.9, fat: 7.4, fib: 0 },
-            { name: "🧀 Queijo coalho da irmã (30g)", kcal: 96, carb: 1.1, prot: 6.4, fat: 7.4, fib: 0 },
+            { name: "🧀 Queijo coalho irmã (30g)", kcal: 96, carb: 1.1, prot: 6.4, fat: 7.4, fib: 0 },
             { name: "🧀 Queijo coalho Medeiros (21g)", kcal: 67, carb: 0.8, prot: 5.2, fat: 6.09, fib: 0 }
         ];
 
@@ -119,18 +123,14 @@
 
         function updateUI() {
             let total = { prot: 0, carb: 0, fat: 0, kcal: 0, fib: 0 };
-            meals.forEach(m => {
-                m.selectedFoods.forEach(f => {
-                    total.prot += f.prot; total.carb += f.carb; total.fat += f.fat;
-                    total.kcal += f.kcal; total.fib += (f.fib || 0);
-                });
-            });
+            meals.forEach(m => m.selectedFoods.forEach(f => {
+                total.prot += f.prot; total.carb += f.carb; total.fat += f.fat;
+                total.kcal += f.kcal; total.fib += (f.fib || 0);
+            }));
 
             const dash = document.getElementById('dashboard-total');
-            const keys = ['prot', 'fat', 'carb', 'kcal'];
-            const labels = { prot: 'Proteína', fat: 'Gordura', carb: 'Carboidrato', kcal: 'Calorias' };
-            
-            dash.innerHTML = keys.map(k => {
+            dash.innerHTML = ['prot', 'fat', 'carb', 'kcal'].map(k => {
+                const labels = { prot: 'Proteína', fat: 'Gordura', carb: 'Carboidrato', kcal: 'Calorias' };
                 const color = getColorClass(total[k], TOTAL_LIMITS[k]);
                 return `
                     <div class="flex flex-col items-center md:items-start">
@@ -142,13 +142,10 @@
                         <div class="h-1.5 w-full bg-gray-200 mt-1 rounded-full overflow-hidden">
                             <div class="h-full bg-current ${color}" style="width: ${Math.min((total[k]/TOTAL_LIMITS[k].max)*100, 100)}%"></div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
 
             document.getElementById('current-fiber').innerText = `${total.fib.toFixed(1)}g`;
-            document.getElementById('current-fiber').className = total.fib >= document.getElementById('target-fiber').value ? 'status-green font-bold text-lg' : 'text-black font-bold text-lg';
-
             renderMeals();
         }
 
@@ -159,64 +156,74 @@
 
             meals.forEach((meal, idx) => {
                 const current = meal.selectedFoods.reduce((acc, f) => {
-                    acc.prot += f.prot; acc.carb += f.carb; acc.fat += f.fat; acc.kcal += f.kcal; acc.fib += (f.fib || 0);
+                    acc.p += f.prot; acc.c += f.carb; acc.g += f.fat; acc.k += f.kcal; acc.f += (f.fib || 0);
                     return acc;
-                }, { prot: 0, carb: 0, fat: 0, kcal: 0, fib: 0 });
+                }, { p: 0, c: 0, g: 0, k: 0, f: 0 });
 
                 const adjTarget = {
-                    prot: meal.target.prot + rollingDiff.prot,
-                    carb: meal.target.carb + rollingDiff.carb,
-                    fat: meal.target.fat + rollingDiff.fat,
-                    kcal: meal.target.kcal + rollingDiff.kcal
+                    p: meal.target.prot + rollingDiff.prot,
+                    c: meal.target.carb + rollingDiff.carb,
+                    g: meal.target.fat + rollingDiff.fat,
+                    k: meal.target.kcal + rollingDiff.kcal
                 };
 
                 const rem = meals.length - (idx + 1);
                 if (rem > 0) {
-                    rollingDiff.prot = (adjTarget.prot - current.prot) / rem;
-                    rollingDiff.carb = (adjTarget.carb - current.carb) / rem;
-                    rollingDiff.fat = (adjTarget.fat - current.fat) / rem;
-                    rollingDiff.kcal = (adjTarget.kcal - current.kcal) / rem;
+                    rollingDiff.prot = (adjTarget.p - current.p) / rem;
+                    rollingDiff.carb = (adjTarget.c - current.c) / rem;
+                    rollingDiff.fat = (adjTarget.g - current.g) / rem;
+                    rollingDiff.kcal = (adjTarget.k - current.k) / rem;
                 }
 
-                const mealDiv = document.createElement('div');
-                mealDiv.className = "bg-white rounded-xl shadow p-5 border-l-8 border-black";
-                mealDiv.innerHTML = `
+                const div = document.createElement('div');
+                div.className = "bg-white rounded-xl shadow p-5 border-l-8 border-black";
+                div.innerHTML = `
                     <div class="flex flex-col md:flex-row justify-between mb-4 border-b pb-2">
                         <h2 class="text-lg font-bold">${meal.name}</h2>
                         <div class="text-right">
-                            <p class="text-[10px] text-black font-bold">META: P:${Math.round(adjTarget.prot)}g C:${Math.round(adjTarget.carb)}g G:${Math.round(adjTarget.fat)}g | ${Math.round(adjTarget.kcal)}kcal</p>
-                            <p class="text-xs ${current.prot >= adjTarget.prot ? 'text-black font-bold' : 'meta-gray'}">
-                                OBTIDO: P:${current.prot.toFixed(1)} C:${current.carb.toFixed(1)} G:${current.fat.toFixed(1)} | Fibras: ${current.fib.toFixed(1)}g
+                            <p class="text-[10px] text-black font-bold uppercase">META: P:${Math.round(adjTarget.p)}g C:${Math.round(adjTarget.c)}g G:${Math.round(adjTarget.g)}g | ${Math.round(adjTarget.k)}kcal</p>
+                            <p class="text-xs ${current.p >= adjTarget.p ? 'text-black font-bold' : 'meta-gray'} uppercase">
+                                OBTIDO: P:${current.p.toFixed(1)} C:${current.c.toFixed(1)} G:${current.g.toFixed(1)} | F: ${current.f.toFixed(1)}g
                             </p>
                         </div>
                     </div>
                     <div class="space-y-2 mb-4">
                         ${meal.selectedFoods.map((f, fIdx) => `
-                            <div class="flex justify-between items-center bg-gray-50 p-2 px-3 rounded text-sm hover:bg-gray-100 border border-transparent hover:border-gray-200">
-                                <div class="flex flex-col">
+                            <div class="flex justify-between items-center bg-gray-50 p-2 px-3 rounded text-sm border border-transparent">
+                                <div>
                                     <span class="font-semibold text-gray-800">${f.name}</span>
-                                    <span class="text-[10px] text-gray-500 uppercase">P: ${f.prot}g | C: ${f.carb}g | G: ${f.fat}g | F: ${f.fib}g</span>
+                                    <span class="text-[10px] text-gray-500 block uppercase">P: ${f.prot}g | C: ${f.carb}g | G: ${f.fat}g | F: ${f.fib}g</span>
                                 </div>
-                                <button onclick="removeFood(${idx}, ${fIdx})" class="text-red-400 hover:text-red-600 p-1">✕</button>
-                            </div>
-                        `).join('')}
+                                <button onclick="removeFood(${idx}, ${fIdx})" class="text-red-400 p-1 no-print">✕</button>
+                            </div>`).join('')}
                     </div>
-                    <select onchange="addFood(${idx}, this)" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 ring-black cursor-pointer">
-                        <option value="">+ Selecionar alimento da despensa...</option>
+                    <select onchange="addFood(${idx}, this)" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg text-sm no-print">
+                        <option value="">+ Adicionar Alimento...</option>
                         ${FOODS.map((f, i) => `<option value="${i}">${f.name}</option>`).join('')}
-                    </select>
-                `;
-                container.appendChild(mealDiv);
+                    </select>`;
+                container.appendChild(div);
             });
         }
 
         function addFood(mIdx, sel) { if(sel.value !== "") { meals[mIdx].selectedFoods.push({...FOODS[sel.value]}); updateUI(); } }
         function removeFood(mIdx, fIdx) { meals[mIdx].selectedFoods.splice(fIdx, 1); updateUI(); }
         
+        // AQUI ESTÁ A FUNÇÃO CORRIGIDA DO PDF
         function downloadPDF() {
+            const uiElements = document.querySelectorAll('.no-print');
+            uiElements.forEach(el => el.style.display = 'none'); // Esconde botões e selects
+
             const element = document.getElementById('app-content');
-            const opt = { margin: 5, filename: 'minha-dieta-personalizada.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }};
-            html2pdf().set(opt).from(element).save();
+            const opt = { 
+                margin: [10, 5, 10, 5], 
+                filename: 'meu-cardapio-dieta.pdf', 
+                html2canvas: { scale: 2, useCORS: true, letterRendering: true }, 
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                uiElements.forEach(el => el.style.display = ''); // Mostra os botões de volta
+            });
         }
 
         updateUI();
