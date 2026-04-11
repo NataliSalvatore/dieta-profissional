@@ -1,504 +1,284 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dieta Profissional</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    :root {
-      --bg: #f1f5f9;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --border: #dbe2ea;
-      --primary: #0f172a;
-      --below: #dc2626;
-      --min: #eab308;
-      --ideal: #16a34a;
-      --max: #f97316;
-      --above: #06b6d4;
-      --soft: #f8fafc;
-    }
-
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
-    }
-    .hero {
-      padding: 24px;
-      margin-bottom: 18px;
-    }
-    .hero h1 {
-      margin: 0 0 8px;
-      font-size: 32px;
-    }
-    .hero p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: end;
-      margin-top: 18px;
-    }
-    .field label {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .field input, .field select {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      font-size: 15px;
-      background: #fff;
-    }
-    .btn {
-      border: 0;
-      background: var(--primary);
-      color: #fff;
-      padding: 12px 16px;
-      border-radius: 14px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-    .btn.secondary {
-      background: #fff;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-    .metric-card {
-      padding: 18px;
-    }
-    .metric-card .title {
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-    .metric-card .value {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 10px;
-    }
-    .metric-card .range {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-    .below { color: var(--below); }
-    .min { color: var(--min); }
-    .ideal { color: var(--ideal); }
-    .max { color: var(--max); }
-    .above { color: var(--above); }
-    .met-black { color: #000; }
-    .met-gray { color: #94a3b8; }
-    .main-grid {
-      display: grid;
-      grid-template-columns: 370px 1fr;
-      gap: 18px;
-      align-items: start;
-    }
-    .sidebar, .summary {
-      padding: 18px;
-    }
-    .sidebar h2, .summary h2 {
-      margin: 0 0 14px;
-      font-size: 22px;
-    }
-    .meal-selector {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-    .meal-selector button {
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: #fff;
-      cursor: pointer;
-      font-weight: 700;
-      text-align: left;
-    }
-    .meal-selector button.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-    .food-list {
-      max-height: 620px;
-      overflow: auto;
-      margin-top: 14px;
-      padding-right: 4px;
-    }
-    .food-item {
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px;
-      margin-bottom: 10px;
-      background: #fff;
-    }
-    .food-item-name {
-      font-weight: 700;
-      line-height: 1.4;
-      margin-bottom: 6px;
-    }
-    .food-item-meta {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-    .meals-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
-    .meal-card {
-      padding: 18px;
-    }
-    .meal-card h3 {
-      margin: 0 0 14px;
-      font-size: 23px;
-    }
-    .meal-subtitle {
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 400;
-    }
-    .meal-targets {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 14px;
-    }
-    .target-box {
-      background: var(--soft);
-      border-radius: 14px;
-      padding: 12px;
-    }
-    .target-box .label {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 4px;
-    }
-    .target-box .goal {
-      color: #000;
-      font-weight: 800;
-      font-size: 15px;
-    }
-    .target-box .actual {
-      font-weight: 800;
-      font-size: 15px;
-      margin-top: 4px;
-    }
-    .meal-total {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 14px;
-      line-height: 1.7;
-    }
-    .meal-items .added-item {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-      align-items: start;
-    }
-    .added-item .meta {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-      margin-top: 6px;
-    }
-    .empty {
-      border: 1px dashed var(--border);
-      border-radius: 14px;
-      padding: 14px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-    .summary { margin-top: 18px; }
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .summary-box {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-    }
-    .summary-box .title {
-      color: var(--muted);
-      font-size: 14px;
-    }
-    .summary-box .value {
-      margin-top: 6px;
-      font-size: 24px;
-      font-weight: 800;
-    }
-    @media (max-width: 1100px) {
-      .metrics-grid, .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .main-grid { grid-template-columns: 1fr; }
-      .meals-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 640px) {
-      .metrics-grid, .summary-grid, .meal-targets, .meal-selector { grid-template-columns: 1fr; }
-      .hero h1 { font-size: 26px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dieta Planner Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
 </head>
-<body>
-  <div class="container">
-    <div class="card hero">
-      <h1>Dieta Profissional</h1>
-      <p>Monte seu cardápio com os alimentos que você tem em casa, acompanhe metas totais e metas por refeição, ajuste a meta de fibra e baixe o cardápio em PDF.</p>
-      <div class="hero-actions">
-        <div class="field" style="max-width: 220px;">
-          <label for="fiberGoal">Meta adaptável de fibra (g)</label>
-          <input id="fiberGoal" type="number" value="25" min="0" />
+<body class="min-h-screen p-4 md:p-8">
+
+<div class="mx-auto max-w-7xl space-y-6">
+    <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden p-6 md:p-8">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+                <div class="text-xs uppercase tracking-widest text-slate-500 font-bold">Planejador de Dieta Profissional</div>
+                <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900">Cardápio Inteligente</h1>
+                <p class="mt-2 max-w-2xl text-slate-600">Acompanhe suas metas com ajuste automático de macros e exportação profissional.</p>
+            </div>
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-700">Meta de Fibra (g)</label>
+                    <input type="number" id="meta-fibra" value="25" oninput="render()" class="flex h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button onclick="gerarPDF()" class="flex items-center justify-center gap-2 h-11 px-6 rounded-2xl bg-slate-900 text-white font-medium hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
+                    <i data-lucide="file-down" class="w-4 h-4"></i> Exportar PDF
+                </button>
+            </div>
         </div>
-        <button class="btn" id="downloadPdf">Baixar cardápio em PDF</button>
-        <button class="btn secondary" id="clearAll">Limpar tudo</button>
-      </div>
     </div>
 
-    <div class="metrics-grid" id="topMetrics"></div>
-
-    <div class="main-grid">
-      <div class="card sidebar">
-        <h2>Adicionar alimentos</h2>
-        <div class="field">
-          <label>Selecionar refeição</label>
-          <div class="meal-selector" id="mealSelector"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="dashboard-geral">
         </div>
-        <div class="field">
-          <label for="searchFood">Buscar alimento</label>
-          <input id="searchFood" type="text" placeholder="Buscar alimento" />
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1 space-y-4">
+            <div class="bg-white rounded-[2rem] border border-slate-200 p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-4 font-bold text-slate-900">
+                    <i data-lucide="search" class="w-5 h-5 text-blue-500"></i> Buscar Alimentos
+                </div>
+                <div class="relative mb-4">
+                    <input type="text" id="busca" placeholder="Ex: Frango, Arroz..." oninput="render()" class="w-full h-11 pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none">
+                    <i data-lucide="search" class="absolute left-4 top-3 w-4 h-4 text-slate-400"></i>
+                </div>
+                <div class="space-y-4 h-[500px] overflow-y-auto pr-2 custom-scroll" id="lista-busca">
+                    </div>
+            </div>
         </div>
-        <div class="food-list" id="foodList"></div>
-      </div>
 
-      <div class="meals-grid" id="mealsGrid"></div>
+        <div class="lg:col-span-2 space-y-6" id="refeicoes-container">
+            </div>
     </div>
+</div>
 
-    <div class="card summary">
-      <h2>Resumo do dia</h2>
-      <div class="summary-grid" id="summaryGrid"></div>
-    </div>
-  </div>
-
-  <script>
+<script>
     const FOOD_OPTIONS = [
-      { id: "ovo-cozido-grande", name: "🥚 Ovo cozido grande (58g)", calories: 76, carbs: 0.3, protein: 6.9, fat: 4.9, fiber: 0 },
-      { id: "ovo-cozido-sem-gema", name: "🥚 Ovo cozido sem a gema", calories: 18, carbs: 0, protein: 4.2, fat: 0, fiber: 0 },
-      { id: "dois-ovos-fritos-margarina", name: "🥚🥚🧈 Dois ovos (58g) fritos na margarina (10g - uma colher de sopa)", calories: 121, carbs: 0.3, protein: 13.8, fat: 9.9, fiber: 0 },
-      { id: "margarina", name: "🧈 Margarina (10g - 1 colher)", calories: 45, carbs: 0, protein: 0, fat: 5, fiber: 0 },
-      { id: "oleo-soja", name: "🛢️ Óleo de soja (10 ml - 1 colher)", calories: 83, carbs: 0, protein: 0, fat: 9.2, fiber: 0 },
-      { id: "arroz-100", name: "🍚 Arroz cozido (100g - 8 colheres)", calories: 142, carbs: 28.1, protein: 2.5, fat: 1.7, fiber: 1.6 },
-      { id: "arroz-150", name: "🍚 Arroz cozido (150g - 12 colheres)", calories: 213, carbs: 42.2, protein: 3.8, fat: 2.6, fiber: 2.4 },
-      { id: "feijao-100", name: "🍲 Feijão cozido (100g - 2 conchas)", calories: 76, carbs: 13.6, protein: 4.8, fat: 0.5, fiber: 8.5 },
-      { id: "feijao-carne-100", name: "🍲 Feijão cozido com caldo de carne (100g - 2 conchas)", calories: 85, carbs: 13.6, protein: 4.8, fat: 1.5, fiber: 8.5 },
-      { id: "feijao-150", name: "🍲 Feijão cozido (150g - 3 conchas)", calories: 114, carbs: 20.4, protein: 7.2, fat: 0.8, fiber: 12.8 },
-      { id: "feijao-carne-150", name: "🍲 Feijão cozido com caldo de carne (150g - 3 conchas)", calories: 128, carbs: 20.4, protein: 7.2, fat: 2.3, fiber: 12.8 },
-      { id: "pao-sovado", name: "🫓 Pão sovado (40g)", calories: 124, carbs: 24.6, protein: 3.4, fat: 1.1, fiber: 1 },
-      { id: "pao-frances-inteiro", name: "🍞 Pão francês inteiro (38g)", calories: 114, carbs: 22.3, protein: 3, fat: 1.2, fiber: 0.9 },
-      { id: "pao-frances-sem-miolo", name: "🍞 Pão francês sem miolo (22g)", calories: 66, carbs: 12.9, protein: 1.8, fat: 0.7, fiber: 0.5 },
-      { id: "aveia", name: "🌾 Aveia (40g - 4 colheres)", calories: 148, carbs: 23, protein: 5.6, fat: 3.1, fiber: 2.7 },
-      { id: "granola-light", name: "🌰 Granola São Braz Light (40g - 5 colheres)", calories: 147, carbs: 29, protein: 3.7, fat: 2, fiber: 3 },
-      { id: "granola-tradicional", name: "🌰 Granola São Braz Tradicional (40g - 5 colheres)", calories: 150, carbs: 32, protein: 2.4, fat: 2.1, fiber: 3.4 },
-      { id: "granola-bem-estar", name: "🌰 Granola Bem Estar (40g - 5 colheres)", calories: 140, carbs: 25, protein: 4.2, fat: 2.4, fiber: 3 },
-      { id: "farinha-lactea-30", name: "🥣 Farinha láctea (30g - 4 colheres)", calories: 122, carbs: 22, protein: 3.8, fat: 1.9, fiber: 0 },
-      { id: "farinha-lactea-15", name: "🥣 Farinha láctea (15g - 2 colheres)", calories: 61, carbs: 11, protein: 1.9, fat: 0.95, fiber: 0 },
-      { id: "tapioca-peq-lopes", name: "🍙 Tapioca pequena Lopes (68g)", calories: 155, carbs: 38.8, protein: 0, fat: 0, fiber: 0.4 },
-      { id: "tapioca-gde-lopes", name: "🍙 Tapioca grande Lopes (115g)", calories: 262, carbs: 65.6, protein: 0, fat: 0, fiber: 0.7 },
-      { id: "tapioca-peq-parceria", name: "🍙 Tapioca pequena Parceria (68g)", calories: 177, carbs: 44.2, protein: 0, fat: 0, fiber: 0 },
-      { id: "tapioca-gde-parceria", name: "🍙 Tapioca grande Parceria (115g)", calories: 299, carbs: 74.8, protein: 0, fat: 0, fiber: 0 },
-      { id: "tapioca-peq-kume", name: "🍙 Tapioca pequena Kumê (68g)", calories: 177, carbs: 44.2, protein: 0, fat: 0, fiber: 0 },
-      { id: "tapioca-gde-kume", name: "🍙 Tapioca grande Kumê (115g)", calories: 299, carbs: 74.8, protein: 0, fat: 0, fiber: 0 },
-      { id: "cuscuz-vita-cru-50", name: "🌽 Cuscuz Vitamilho CRU (50g)", calories: 176, carbs: 40, protein: 3.6, fat: 0.8, fiber: 2.8 },
-      { id: "cuscuz-vita-cru-100", name: "🌽 Cuscuz Vitamilho CRU (100g)", calories: 351, carbs: 79, protein: 7.2, fat: 1.5, fiber: 5.5 },
-      { id: "cuscuz-clara-cru-50", name: "🌽 Cuscuz Dona Clara CRU (50g)", calories: 176, carbs: 40, protein: 3.2, fat: 0.4, fiber: 0.6 },
-      { id: "cuscuz-clara-cru-100", name: "🌽 Cuscuz Dona Clara CRU (100g)", calories: 352, carbs: 80, protein: 6.3, fat: 0.7, fiber: 1.1 },
-      { id: "cuscuz-clara-coz-50", name: "🌽 Cuscuz Dona Clara COZIDO (50g)", calories: 57, carbs: 12.6, protein: 1.1, fat: 0.05, fiber: 0.4 },
-      { id: "cuscuz-clara-coz-100", name: "🌽 Cuscuz Dona Clara COZIDO (100g)", calories: 113, carbs: 25.2, protein: 2.2, fat: 0.1, fiber: 0.8 },
-      { id: "cuscuz-vita-coz-50", name: "🌽 Cuscuz Vitamilho COZIDO (50g)", calories: 57, carbs: 12.6, protein: 1.1, fat: 0.05, fiber: 1.9 },
-      { id: "cuscuz-vita-coz-100", name: "🌽 Cuscuz Vitamilho COZIDO (100g)", calories: 113, carbs: 25.2, protein: 2.2, fat: 0.1, fiber: 3.9 },
-      { id: "banana-70", name: "🍌 Banana (70g)", calories: 69, carbs: 18.2, protein: 0.9, fat: 0.07, fiber: 0 },
-      { id: "banana-100", name: "🍌 Banana (100g)", calories: 98, carbs: 26, protein: 1.3, fat: 0.1, fiber: 0 },
-      { id: "banana-150", name: "🍌 Banana (150g)", calories: 147, carbs: 39, protein: 2, fat: 0.15, fiber: 0 },
-      { id: "leite-po-int-13", name: "🥛 Leite em pó integral (13g - 1 colher)", calories: 65, carbs: 5, protein: 3.2, fat: 3.5, fiber: 0 },
-      { id: "leite-po-des-13", name: "🥛 Leite em pó desnatado (13g - 1 colher)", calories: 44, carbs: 6.5, protein: 4.5, fat: 0, fiber: 0 },
-      { id: "leite-po-des-26", name: "🥛 Leite em pó desnatado (26g - 2 colheres)", calories: 88, carbs: 13, protein: 9, fat: 0, fiber: 0 },
-      { id: "leite-po-int-26", name: "🥛 Leite em pó integral (26g - 2 colheres)", calories: 129, carbs: 10, protein: 6.5, fat: 7, fiber: 0 },
-      { id: "bisteca-60", name: "🍖 Bisteca magra frita no óleo, gordura retirada (60g, ~55g consumido)", calories: 107, carbs: 0, protein: 17.8, fat: 3.9, fiber: 0 },
-      { id: "bisteca-70", name: "🍖 Bisteca magra frita no óleo, gordura retirada (70g, ~64g consumido)", calories: 125, carbs: 0, protein: 20.7, fat: 4.5, fiber: 0 },
-      { id: "frango-frito-60", name: "🍗 Peito de frango frito no óleo (60g)", calories: 103, carbs: 0, protein: 18.9, fat: 2.5, fiber: 0 },
-      { id: "frango-frito-70", name: "🍗 Peito de frango frito no óleo (70g)", calories: 120, carbs: 0, protein: 22, fat: 2.9, fiber: 0 },
-      { id: "frango-refogado-60", name: "🍗 Frango cozido refogado (60g)", calories: 124, carbs: 0, protein: 16.2, fat: 6.3, fiber: 0 },
-      { id: "frango-refogado-70", name: "🍗 Frango cozido refogado (70g)", calories: 144, carbs: 0, protein: 18.9, fat: 7.4, fiber: 0 },
-      { id: "queijo-irma", name: "🧀 Queijo coalho da irmã (30g - 1 fatia)", calories: 96, carbs: 1.1, protein: 6.4, fat: 7.4, fiber: 0 },
-      { id: "queijo-medeiros", name: "🧀 Queijo coalho do Medeiros (21g - 1 fatia)", calories: 67, carbs: 0.8, protein: 5.2, fat: 6.09, fiber: 0 },
+        { id: 1, name: "🥚 Ovo cozido grande (58g)", kcal: 76, carbs: 0.3, protein: 6.9, fat: 4.9, fiber: 0 },
+        { id: 2, name: "🥚 Ovo cozido sem a gema", kcal: 18, carbs: 0, protein: 4.2, fat: 0, fiber: 0 },
+        { id: 3, name: "🥚🥚🧈 2 ovos fritos na margarina", kcal: 121, carbs: 0.3, protein: 13.8, fat: 9.9, fiber: 0 },
+        { id: 4, name: "🧈 Margarina (10g)", kcal: 45, carbs: 0, protein: 0, fat: 5, fiber: 0 },
+        { id: 5, name: "🛢️ Óleo de soja (10 ml)", kcal: 83, carbs: 0, protein: 0, fat: 9.2, fiber: 0 },
+        { id: 6, name: "🍚 Arroz cozido (100g)", kcal: 142, carbs: 28.1, protein: 2.5, fat: 1.7, fiber: 1.6 },
+        { id: 7, name: "🍚 Arroz cozido (150g)", kcal: 213, carbs: 42.2, protein: 3.8, fat: 2.6, fiber: 2.4 },
+        { id: 8, name: "🍲 Feijão cozido (100g)", kcal: 76, carbs: 13.6, protein: 4.8, fat: 0.5, fiber: 8.5 },
+        { id: 9, name: "🍲 Feijão com caldo de carne (100g)", kcal: 85, carbs: 13.6, protein: 4.8, fat: 1.5, fiber: 8.5 },
+        { id: 10, name: "🍲 Feijão cozido (150g)", kcal: 114, carbs: 20.4, protein: 7.2, fat: 0.8, fiber: 12.8 },
+        { id: 11, name: "🍲 Feijão com caldo de carne (150g)", kcal: 128, carbs: 20.4, protein: 7.2, fat: 2.3, fiber: 12.8 },
+        { id: 12, name: "🫓 Pão sovado (40g)", kcal: 124, carbs: 24.6, protein: 3.4, fat: 1.1, fiber: 1 },
+        { id: 13, name: "🍞 Pão francês inteiro (38g)", kcal: 114, carbs: 22.3, protein: 3, fat: 1.2, fiber: 0.9 },
+        { id: 14, name: "🍞 Pão francês sem miolo (22g)", kcal: 66, carbs: 12.9, protein: 1.8, fat: 0.7, fiber: 0.5 },
+        { id: 15, name: "🌾 Aveia (40g)", kcal: 148, carbs: 23, protein: 5.6, fat: 3.1, fiber: 2.7 },
+        { id: 16, name: "🌰 Granola São Braz Light (40g)", kcal: 147, carbs: 29, protein: 3.7, fat: 2, fiber: 3 },
+        { id: 17, name: "🌰 Granola São Braz Tradicional (40g)", kcal: 150, carbs: 32, protein: 2.4, fat: 2.1, fiber: 3.4 },
+        { id: 18, name: "🌰 Granola Bem Estar (40g)", kcal: 140, carbs: 25, protein: 4.2, fat: 2.4, fiber: 3 },
+        { id: 19, name: "🥣 Farinha láctea (30g)", kcal: 122, carbs: 22, protein: 3.8, fat: 1.9, fiber: 0 },
+        { id: 20, name: "🥣 Farinha láctea (15g)", kcal: 61, carbs: 11, protein: 1.9, fat: 0.95, fiber: 0 },
+        { id: 21, name: "🍙 Tapioca grande Lopes (115g)", kcal: 262, carbs: 65.6, protein: 0, fat: 0, fiber: 0.7 },
+        { id: 22, name: "🌽 Cuscuz Vitamilho Cozido (100g)", kcal: 113, carbs: 25.2, protein: 2.2, fat: 0.1, fiber: 3.9 },
+        { id: 23, name: "🍌 Banana (100g)", kcal: 98, carbs: 26, protein: 1.3, fat: 0.1, fiber: 2 },
+        { id: 24, name: "🥛 Leite em pó integral (26g)", kcal: 129, carbs: 10, protein: 6.5, fat: 7, fiber: 0 },
+        { id: 25, name: "🍗 Peito de frango frito no óleo (70g)", kcal: 120, carbs: 0, protein: 22, fat: 2.9, fiber: 0 },
+        { id: 26, name: "🍖 Bisteca magra frita óleo (64g)", kcal: 125, carbs: 0, protein: 20.7, fat: 4.5, fiber: 0 },
+        { id: 27, name: "🧀 Queijo coalho da irmã (30g)", kcal: 96, carbs: 1.1, protein: 6.4, fat: 7.4, fiber: 0 }
     ];
 
-    const DAILY_TARGETS = {
-      protein: { min: 95, ideal: 118, max: 130, label: "Proteína", unit: "g" },
-      fat: { min: 47, ideal: 59, max: 70, label: "Gordura", unit: "g" },
-      carbs: { min: 150, ideal: 175, max: 200, label: "Carboidrato", unit: "g" },
-      calories: { min: 1600, ideal: 1700, max: 1800, label: "Calorias", unit: "kcal" },
+    const TARGETS = {
+        protein: { min: 95, ideal: 118, max: 130, label: "Proteína", unit: "g" },
+        fat: { min: 47, ideal: 59, max: 70, label: "Gordura", unit: "g" },
+        carbs: { min: 150, ideal: 175, max: 200, label: "Carboidrato", unit: "g" },
+        calories: { min: 1600, ideal: 1700, max: 1800, label: "Calorias", unit: "kcal" }
     };
 
-    const MEALS = [
-      { id: "cafe", name: "🍳 Café da manhã", targets: { protein: 28, carbs: 40, fat: 14, calories: 398 } },
-      { id: "almoco", name: "🍛 Almoço", targets: { protein: 32, carbs: 55, fat: 18, calories: 506 } },
-      { id: "lanche", name: "☕ Lanche da tarde", subtitle: "(pré/pós treino)", targets: { protein: 30, carbs: 50, fat: 7, calories: 387 } },
-      { id: "janta", name: "🌙 Jantar", subtitle: "(leve)", targets: { protein: 28, carbs: 30, fat: 20, calories: 409 } },
+    let meals = [
+        { id: "cafe", name: "☕ Café da Manhã", targets: { protein: 28, carbs: 40, fat: 14, kcal: 398 }, items: [] },
+        { id: "almoco", name: "🍛 Almoço", targets: { protein: 32, carbs: 55, fat: 18, kcal: 506 }, items: [] },
+        { id: "lanche", name: "🥨 Lanche da Tarde", subtitle: "(pré/pós treino)", targets: { protein: 30, carbs: 50, fat: 7, kcal: 387 }, items: [] },
+        { id: "janta", name: "🌙 Jantar", subtitle: "(leve)", targets: { protein: 28, carbs: 30, fat: 20, kcal: 409 }, items: [] }
     ];
 
-    const state = {
-      selectedMeal: "cafe",
-      search: "",
-      fiberGoal: 25,
-      mealItems: {
-        cafe: [],
-        almoco: [],
-        lanche: [],
-        janta: [],
-      }
-    };
-
-    function round1(value) {
-      return Math.round((value + Number.EPSILON) * 10) / 10;
+    function getStatusClass(val, target) {
+        if (val < target.min) return "text-red-600";
+        if (val === target.min) return "text-yellow-500";
+        if (val <= target.ideal) return "text-green-600";
+        if (val <= target.max) return "text-orange-500";
+        return "text-cyan-600";
     }
 
-    function sumMeal(items) {
-      return items.reduce((acc, item) => ({
-        calories: acc.calories + item.calories,
-        carbs: acc.carbs + item.carbs,
-        protein: acc.protein + item.protein,
-        fat: acc.fat + item.fat,
-        fiber: acc.fiber + item.fiber,
-      }), { calories: 0, carbs: 0, protein: 0, fat: 0, fiber: 0 });
+    function addFood(mealId, foodId) {
+        const food = FOOD_OPTIONS.find(f => f.id == foodId);
+        const meal = meals.find(m => m.id == mealId);
+        meal.items.push({...food, uniqueId: Date.now()});
+        render();
     }
 
-    function getTotalStatus(value, target) {
-      const v = round1(value);
-      if (v < target.min) return "below";
-      if (v === target.min) return "min";
-      if (v <= target.ideal) return "ideal";
-      if (v <= target.max) return "max";
-      return "above";
+    function removeFood(mealId, uniqueId) {
+        const meal = meals.find(m => m.id == mealId);
+        meal.items = meal.items.filter(it => it.uniqueId !== uniqueId);
+        render();
     }
 
-    function distributeDelta(delta, futureIndexes, allocations) {
-      if (!futureIndexes.length || delta === 0) return allocations;
-      const sign = delta > 0 ? 1 : -1;
-      let remaining = Math.abs(Math.round(delta));
-      let pointer = 0;
-      while (remaining > 0 && futureIndexes.length > 0) {
-        const idx = futureIndexes[pointer % futureIndexes.length];
-        allocations[idx] += sign;
-        remaining -= 1;
-        pointer += 1;
-      }
-      return allocations;
-    }
+    function render() {
+        const dashboard = document.getElementById('dashboard-geral');
+        const listaBusca = document.getElementById('lista-busca');
+        const refeicoesCont = document.getElementById('refeicoes-container');
+        const termoBusca = document.getElementById('busca').value.toLowerCase();
+        const metaFibra = parseFloat(document.getElementById('meta-fibra').value) || 0;
 
-    function calculateAdjustedTargets(mealSummaries) {
-      const adjusted = MEALS.map(meal => ({ id: meal.id, name: meal.name, targets: { ...meal.targets } }));
-      ["protein", "carbs", "fat", "calories"].forEach(metric => {
-        const allocations = new Array(MEALS.length).fill(0);
-        for (let i = 0; i < MEALS.length - 1; i += 1) {
-          const currentTarget = MEALS[i].targets[metric] + allocations[i];
-          adjusted[i].targets[metric] = Math.max(0, round1(currentTarget));
-          const consumed = mealSummaries[i][metric];
-          const delta = round1(currentTarget - consumed);
-          const futureIndexes = [];
-          for (let j = i + 1; j < MEALS.length; j += 1) futureIndexes.push(j);
-          distributeDelta(delta, futureIndexes, allocations);
+        let totalDay = { protein: 0, carbs: 0, fat: 0, kcal: 0, fiber: 0 };
+        let currentAdjusted = meals.map(m => ({...m.targets}));
+
+        // Lógica de Redistribuição
+        for (let i = 0; i < meals.length; i++) {
+            let mealTotal = { protein: 0, carbs: 0, fat: 0, kcal: 0, fiber: 0 };
+            meals[i].items.forEach(it => {
+                mealTotal.protein += it.protein; mealTotal.carbs += it.carbs; mealTotal.fat += it.fat;
+                mealTotal.kcal += it.kcal; mealTotal.fiber += it.fiber;
+                totalDay.protein += it.protein; totalDay.carbs += it.carbs; totalDay.fat += it.fat;
+                totalDay.kcal += it.kcal; totalDay.fiber += it.fiber;
+            });
+            meals[i].current = mealTotal;
+
+            // Diferença para distribuir
+            let diff = { 
+                p: currentAdjusted[i].protein - mealTotal.protein,
+                c: currentAdjusted[i].carbs - mealTotal.carbs,
+                g: currentAdjusted[i].fat - mealTotal.fat,
+                k: currentAdjusted[i].kcal - mealTotal.kcal
+            };
+
+            let restantes = meals.length - 1 - i;
+            if (restantes > 0) {
+                for (let j = i + 1; j < meals.length; j++) {
+                    currentAdjusted[j].protein += diff.p / restantes;
+                    currentAdjusted[j].carbs += diff.c / restantes;
+                    currentAdjusted[j].fat += diff.g / restantes;
+                    currentAdjusted[j].kcal += diff.k / restantes;
+                }
+            }
         }
-        const lastIndex = MEALS.length - 1;
-        adjusted[lastIndex].targets[metric] = Math.max(0, round1(MEALS[lastIndex].targets[metric] + allocations[lastIndex]));
-      });
-      return adjusted;
+
+        // Render Dashboard
+        const stats = [
+            { label: "Proteína", val: totalDay.protein, target: TARGETS.protein, unit: "g" },
+            { label: "Carboidrato", val: totalDay.carbs, target: TARGETS.carbs, unit: "g" },
+            { label: "Gordura", val: totalDay.fat, target: TARGETS.fat, unit: "g" },
+            { label: "Calorias", val: totalDay.kcal, target: TARGETS.calories, unit: "kcal" },
+            { label: "Fibra", val: totalDay.fiber, target: {min: metaFibra, ideal: metaFibra, max: metaFibra+10}, unit: "g" }
+        ];
+
+        dashboard.innerHTML = stats.map(s => `
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+                <div class="text-xs font-bold text-slate-500 uppercase">${s.label}</div>
+                <div class="mt-1 text-2xl font-extrabold ${getStatusClass(s.val, s.target)}">
+                    ${s.val.toFixed(1)} <span class="text-sm font-normal">${s.unit}</span>
+                </div>
+                <div class="mt-2 text-[10px] text-slate-400 font-medium">
+                    Min ${s.target.min} • Ideal ${s.target.ideal} • Máx ${s.target.max}
+                </div>
+            </div>
+        `).join('');
+
+        // Render Busca
+        listaBusca.innerHTML = FOOD_OPTIONS.filter(f => f.name.toLowerCase().includes(termoBusca)).map(f => `
+            <div class="group bg-white rounded-2xl border border-slate-100 p-3 hover:border-blue-200 transition-all shadow-sm">
+                <div class="font-bold text-slate-800 text-sm">${f.name}</div>
+                <div class="text-[10px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">
+                    P ${f.protein}g • C ${f.carbs}g • G ${f.fat}g • ${f.kcal} kcal
+                </div>
+                <div class="mt-2 flex gap-1 overflow-x-auto pb-1">
+                    ${meals.map(m => `<button onclick="addFood('${m.id}', ${f.id})" class="text-[9px] bg-slate-100 px-2 py-1 rounded-lg hover:bg-blue-500 hover:text-white transition-colors font-bold whitespace-nowrap">+ ${m.id.toUpperCase()}</button>`).join('')}
+                </div>
+            </div>
+        `).join('');
+
+        // Render Refeições
+        refeicoesCont.innerHTML = meals.map((m, i) => `
+            <div class="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-bottom border-slate-100 pb-4 mb-4">
+                        <div>
+                            <h3 class="text-xl font-extrabold text-slate-900">${m.name}</h3>
+                            <p class="text-xs text-slate-500 font-medium">${m.subtitle || ''}</p>
+                        </div>
+                        <div class="bg-slate-50 px-4 py-2 rounded-xl text-[10px] font-bold text-slate-600">
+                            META: P ${currentAdjusted[i].protein.toFixed(1)}g | C ${currentAdjusted[i].carbs.toFixed(1)}g | G ${currentAdjusted[i].fat.toFixed(1)}g
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                        ${['protein', 'carbs', 'fat', 'kcal'].map(key => `
+                            <div class="bg-slate-50 p-3 rounded-2xl">
+                                <div class="text-[10px] uppercase font-bold text-slate-400">${key == 'kcal' ? 'Calorias' : key}</div>
+                                <div class="text-sm font-bold ${m.current[key] >= currentAdjusted[i][key] - 0.5 ? 'text-black' : 'text-slate-300'}">
+                                    ${m.current[key].toFixed(1)} <span class="text-[10px]">/ ${currentAdjusted[i][key].toFixed(1)}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="space-y-2">
+                        ${m.items.length === 0 ? '<div class="text-center py-4 text-xs text-slate-400 font-medium border-2 border-dashed border-slate-100 rounded-2xl">Nenhum alimento adicionado</div>' : ''}
+                        ${m.items.map(it => `
+                            <div class="flex justify-between items-center p-3 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+                                <div>
+                                    <div class="text-sm font-bold text-slate-700">${it.name}</div>
+                                    <div class="text-[10px] text-slate-400">P ${it.protein}g | C ${it.carbs}g | G ${it.fat}g | ${it.kcal} kcal</div>
+                                </div>
+                                <button onclick="removeFood('${m.id}', ${it.uniqueId})" class="p-2 text-slate-300 hover:text-red-500">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+        lucide.createIcons();
     }
 
-    function getMealSummaries() {
-      return MEALS.map(meal => sumMeal(state.mealItems[meal.id]));
+    async function gerarPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        let y = 20;
+
+        doc.setFontSize(22);
+        doc.setTextColor(30, 41, 59);
+        doc.text("Meu Planejamento Alimentar", 14, y);
+        y += 15;
+
+        meals.forEach(m => {
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(m.name, 14, y);
+            y += 7;
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Total: P ${m.current.protein.toFixed(1)}g | C ${m.current.carbs.toFixed(1)}g | G ${m.current.fat.toFixed(1)}g | ${m.current.kcal.toFixed(1)} kcal`, 14, y);
+            y += 5;
+
+            m.items.forEach(it => {
+                doc.text(`- ${it.name}`, 18, y);
+                y += 5;
+            });
+            y += 10;
+            if(y > 270) { doc.addPage(); y = 20; }
+        });
+
+        doc.save("meu-cardapio-pro.pdf");
     }
 
-    function getTotalDay() {
-      const mealSummaries = getMealSummaries();
-      return mealSummaries.reduce((acc, meal) => ({
-        calories: round1(acc.calories + meal.calories),
-        carbs: round1(acc.carbs + meal.carbs),
-        protein: round1(acc.protein + meal.protein),
-        fat: round1(acc.fat + meal.fat),
-        fiber: round1(acc.fiber + meal.fiber),
-      }), { calories: 0, carbs: 0, protein: 0, fat: 0, fiber: 0 });
-    }
+    render();
+</script>
 
-    function renderTopMetrics() {
-      const totalDay = getTotalDay();
-      const fiberGoal = Number(state.fiberGoal) || 0;
-      const fiberMet = totalDay.fiber >= fiberGoal;
-      const metrics = [
-        ["protein", DAILY_TARGETS.protein],
-        ["fat", DAILY_TARGETS.fat],
-        ["carbs", DAILY_TARGETS.carbs],
-        ["calories", DAILY_TARGETS.calories],
-      ];
-
-      const html = metrics.map(([key, target]) => {
-        const status = getTotalStatus(totalDay[key], target);
-        return `
-          <div class="card metric-card">
-            <div class="title">${target.label}</div>
-            <div class="value ${status}">${round1(totalDay[key])} ${target.unit}</div>
-            <div class="range">Mín ${target.min} • Ideal ${target.ideal} • Máx ${target.max}</div>
-          </div>
-        `;
-      }).join("") + `
-        <div class="card metric-card">
-          <div class="title">Fibra</div>
-          <div class="value ${fiberMet ? "ideal" : "met-black"}">${round1(totalDay.fiber)} g</div>
-          <div class="range">Meta adaptável: ${fiberGoal}g • ${fiberMet ? "Meta batida" : `Faltam ${round1(Math.max(0, fiberGoal - totalDay.fiber))}g`}</div>
-        </div>
-      `;
-
-      document.getElementById("topMetrics").innerHTML = html;
-    }
-
-    function renderMealSelector() {
-      document.getElementById("mealSelector").innerHTML = MEALS.map(meal => `
+</body>
+</html>
